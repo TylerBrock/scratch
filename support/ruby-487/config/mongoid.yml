@@ -1,0 +1,10 @@
+development:
+  hosts:
+    - - localhost:3000
+    - - localhost:3001
+  database: ruby487_development
+  username: tyler
+  password: secret
+  pool_size: 30
+  pool_timeout: 20
+  read: :secondary
