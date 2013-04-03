@@ -1,0 +1,74 @@
+Tyler Brock presents:
+What Ops people need to know about MongoDB
+
+@tylerbrock tyler@10gen.com
+
+
+When setting up:
+download and untar (thats it)
+/data/db or custom --dbpath (use XFS or ext4, tmpfs?)
+--directoryperdb
+startup and shutdown (ctrl-c or SIGTERM)
+
+
+Getting stats:
+db.serverStatus()
+db.stats()  
+db.collection.stats()
+http://localhost:28017 (server port + 1000)
+http://localhost:28017/_status
+mongostat tool (--discover)
+
+iostat -x 2
+atop
+htop
+blockdev
+dstat
+lsblk
+
+Monitoring tool plugins:
+MMS
+Munin ganglia nagios cacti
+
+Code to see stats:
+db.foo.drop()
+for (var i=0; i<1000000000; i++){
+    db.foo.insert({_id: i});
+    for (var j=0; j< 10; j++){
+        db.foo.findOne({_id: (i-j), s:s});
+    }
+    if (i%1000000 == 0) db.foo.drop()
+}
+Add a big string to show disk util.
+
+Whats going on right now?
+db.currentOp()
+
+Use this to have a query slow enough to see:
+db.foo.find({$where: 'var i=1000000; while(i--); return this.blah != undefined'})
+
+Backup
+mongodump / mongorestore (online-backup)
+locking or shut down
+backup from slave
+db._adminCommand({fsync:1, lock:1})
+db.$cmd.sys.unlock.findOne()
+
+Replication (Just Do It!)
+mongod --smallfiles --noprealloc --oplogSize 100 --replSet mathias --dbpath /data/rs --port 3000
+local.oplog.rs
+delayed replication (slavedelay secs)
+
+It isn't working!?!?!
+check the logs
+try connecting from the shell
+check http output
+
+Going into production:
+distro pkgs (we have them)
+init scripts (make sure they shut down cleanly)
+--fork
+--logpath (internal rotation)
+did I mention replication?
+
+</presentation>
